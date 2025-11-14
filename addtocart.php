@@ -1,9 +1,6 @@
 <?php
 session_start();
 
-/* ----------------------------------
-   CATCH FEATURED PRODUCT VALUES
----------------------------------- */
 if (isset($_POST['best_id'])) {
     $_POST['featured_id'] = $_POST['best_id'];
     $_POST['featured_image'] = $_POST['best_image'];
@@ -12,9 +9,6 @@ if (isset($_POST['best_id'])) {
     $_POST['featured_quantity'] = $_POST['best_quantity'];
 }
 
-/* ----------------------------------
-   ADD TO CART
----------------------------------- */
 if (isset($_POST['addtocart'])) {
 
     $featured_id = $_POST['featured_id'];
@@ -53,9 +47,6 @@ if (isset($_POST['addtocart'])) {
     }
 }
 
-/* ----------------------------------
-   UPDATE QUANTITY
----------------------------------- */
 if (isset($_POST['update_quantity'])) {
     $product_id = $_POST['product_id'];
     $new_qty = (int)$_POST['quantity'];
@@ -65,17 +56,11 @@ if (isset($_POST['update_quantity'])) {
     }
 }
 
-/* ----------------------------------
-   REMOVE ITEM
----------------------------------- */
 if (isset($_POST['remove_product'])) {
     $product_id = $_POST['product_id'];
     unset($_SESSION['cart'][$product_id]);
 }
 
-/* ----------------------------------
-   BLOCK DIRECT ACCESS
----------------------------------- */
 if (!isset($_SESSION['cart'])) {
     header('location: index.php');
     exit();
@@ -241,3 +226,4 @@ if (!isset($_SESSION['cart'])) {
 
 </body>
 </html>
+
