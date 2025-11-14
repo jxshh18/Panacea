@@ -1,0 +1,36 @@
+body {
+      background-color: #F9FAFB;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Playfair Display', serif;
+    }
+    .font-semibold {
+      font-family: 'Lato', sans-serif;
+      font-weight: 600;
+    }
+    p, .text-sm, .text-gray-600, .text-lg, input, textarea, button {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+    }
+    .primary-bg {
+      background-color: #0077C8;
+    }
+    .secondary-bg {
+      background-color: #28A745;
+    }
+    .light-bg {
+      background-color: #E5E7EB;
+    }
+    .hover-primary {
+      background-color: #4A90E2;
+    }
+    .text-primary {
+      color: #0077C8;
+    }
+    .text-secondary {
+      color: #28A745;
+    }
+    .bg-primary { background-color: #0077C8;
+    }
+    .text-primary { color: #0077C8;
+    }

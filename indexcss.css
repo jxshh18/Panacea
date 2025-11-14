@@ -1,0 +1,114 @@
+@font-face {
+    font-family: Lato;
+    src: url(Lato/Lato-Regular.ttf);
+    font-family: Play fair;
+    sr: url(playfair-display/PlayfairDisplay-Regular.ttf)
+  }
+
+
+body {
+      background-color: #F9FAFB;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Playfair Display', serif;
+    }
+    .font-semibold {
+      font-family: 'Lato', sans-serif;
+      font-weight: 600;
+    }
+    p, .text-sm, .text-gray-600, .text-lg, input, textarea, button {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+    }
+    .primary-bg {
+      background-color: #0077C8;
+    }
+    .secondary-bg {
+      background-color: #28A745;
+    }
+    .light-bg {
+      background-color: #E5E7EB;
+    }
+    .hover-primary {
+      background-color: #4A90E2;
+    }
+    .text-primary {
+      color: #0077C8;
+    }
+    .text-secondary {
+      color: #28A745;
+    }
+    .categories {
+      font-family: 'Lato', sans-serif;
+      font-weight: 600;
+      text-align: left;
+      font-size: 25px;
+      color: #0077C8;
+    }
+    .category-container {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      flex-wrap: wrap;
+      padding: 20px;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .category-item {
+      text-align: center;
+      width: 120px;
+      align-items: center;
+      flex-direction: column;
+      display: flex;
+    }
+    .category-item img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      margin-bottom: 10px;
+      transition: transform 0.3s ease;
+    }
+    .category-item p {
+      font-size: 1em;
+      color: #333;
+    }
+    .category-item:hover img {
+      transform: scale(1.1); 
+    }
+    
+.carousel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 475px;
+            width: auto;
+            background-color: #E5E7EB;
+        }
+        .slider-container {
+            width: 800px;
+            height: 431px;
+            overflow: hidden;
+            position: relative;
+        }
+        .slider {
+            display: flex;
+            width: 300%;
+            animation: slide 15s infinite;
+        }
+        .slider img {
+            width: 800px;
+            height: 431px
+        }
+
+       @keyframes slide {
+    0% { transform: translateX(0); }
+    33% { transform: translateX(0); }
+    38% { transform: translateX(-800px); }
+    71% { transform: translateX(-800px); }
+    76% { transform: translateX(-1600px); }
+    100% { transform: translateX(-1600px); }
+}
+
