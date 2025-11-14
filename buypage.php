@@ -1,3 +1,48 @@
+<?php
+include 'server/connection.php';
+session_start();
+
+if (!isset($_GET['id']) || !isset($_GET['type'])) {
+    echo "Invalid Product Request.";
+    exit;
+}
+
+$product_id = intval($_GET['id']);
+$type = $_GET['type'];
+
+if ($type === "featured") {
+    $query = $conn->prepare("
+        SELECT featured_id AS id, featured_name AS name, featured_price AS price, featured_image AS image
+        FROM featured
+        WHERE featured_id = ?
+    ");
+} 
+else if ($type === "bestseller") {
+    $query = $conn->prepare("
+        SELECT best_id AS id, best_name AS name, best_price AS price, best_image AS image
+        FROM bestsellers
+        WHERE best_id = ?
+    ");
+} 
+else {
+    echo "Invalid type parameter.";
+    exit;
+}
+
+$query->bind_param("i", $product_id);
+$query->execute();
+$result = $query->get_result();
+
+if ($result->num_rows === 0) {
+    echo "Product not found.";
+    exit;
+}
+
+$product = $result->fetch_assoc();
+$total_amount = $product['price'];
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,11 +73,10 @@
     }
   </script>
 </head>
-<body class="text-gray-800">
-  <!-- Top Gray Bar -->
-  <div class="bg-light-bg py-1"></div>
 
-  <!-- Header -->
+<body class="bg-gray-100 min-h-screen">
+
+<!-- Header -->
   <header class="bg-white shadow p-4 flex items-center sticky top-0 z-50">
     <div class="flex items-center space-x-2">
       <a href="/index.php">
@@ -63,82 +107,81 @@
     </nav>
   </header>
 
-  <!-- Banner -->
-  <div class="carousel">
-    <div class="slider-container">
-        <div class="slider">
-            <img src="images/banner/We_Care.png" alt="Image 1">
-            <img src="images/banner/Keep_Yourself_Safe.png" alt="Image 2">
-            <img src="images/banner/Help_Us.png" alt="Image 3">
+
+<!-- PAGE CONTAINER -->
+<div class="max-w-4xl mx-auto p-6 mt-10">
+
+    <h1 class="text-3xl font-bold mb-6 text-center">Complete Your Purchase</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <!-- LEFT: PRODUCT SUMMARY -->
+        <div class="bg-white shadow-lg rounded-xl p-6">
+            <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+
+            <?php if ($product): ?>
+                <div class="space-y-2">
+                    <p class="text-lg"><strong>Product:</strong> <?= htmlspecialchars($product['name']) ?></p>
+                    <p class="text-lg"><strong>Price:</strong> ₱<?= number_format($product['price'], 2) ?></p>
+                </div>
+            <?php else: ?>
+                <p class="text-red-500">Product not found.</p>
+            <?php endif; ?>
+        </div>
+
+
+        <!-- RIGHT: CUSTOMER DETAILS -->
+        <div class="bg-white shadow-lg rounded-xl p-6">
+            <h2 class="text-xl font-semibold mb-4">Customer Details</h2>
+
+            <form class="space-y-4">
+
+                <div>
+                    <label class="block mb-1 font-semibold">Full Name</label>
+                    <input type="text" class="w-full border rounded p-2" placeholder="Juan Dela Cruz">
+                </div>
+
+                <div>
+                    <label class="block mb-1 font-semibold">Address</label>
+                    <textarea class="w-full border rounded p-2" rows="3" placeholder="Street, Barangay, City, Province"></textarea>
+                </div>
+
+                <div>
+                    <label class="block mb-1 font-semibold">Phone Number</label>
+                    <input type="text" class="w-full border rounded p-2" placeholder="09XXXXXXXXX">
+                </div>
+
+                <div>
+                    <label class="block mb-1 font-semibold">Payment Method</label>
+                    <select class="w-full border rounded p-2">
+                        <option>Cash on Delivery</option>
+                        <option>GCash</option>
+                        <option>Credit / Debit Card</option>
+                    </select>
+                </div>
+
+            </form>
+
+            <!-- TOTAL -->
+            <div class="border-t mt-6 pt-4">
+                <p class="flex justify-between text-lg font-semibold">
+                    <span>Total:</span>
+                    <span class="text-blue-600">
+                        ₱<?= number_format($product['price'], 2) ?>
+                    </span>
+                </p>
+
+                <button class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 transition">
+                    Buy Now
+                </button>
+            </div>
+
+
         </div>
     </div>
-  </div>
+</div>
 
-  <!-- Categories Section -->
-<section id="products" class="py-10 px-6">
-  <h3 class="text-2xl font-semibold text-center mb-8 text-primary">Shop by Category</h3>
-  <div class="category-container">
-  <?php include('server/get_categories.php'); ?>
-  <?php while($row=$categories->fetch_assoc()){ ?>
-    <a href="server/category.php?id=<?php echo $row['category_id']; ?>" class="category-item">
-      <img src="<?php echo $row['category_image']; ?>">
-      <p><?php echo $row['category_name']; ?></p>
-    </a>
-  <?php }?>
-  </div>
-</section>
-
-<div class="mx-auto w-[1400px] border-b-2 border-gray-300 mb-6"></div>
-
-  <!-- Featured Section -->
- <section id="products" class="py-10 px-6">
-  <h3 class="text-2xl font-semibold text-center mb-8 text-primary">Featured Products</h3>
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-  <?php include('server/get_featured_products.php'); ?>
-  <?php while($row=$featured_products->fetch_assoc()){ ?>
-    <div class="bg-white shadow rounded p-4 hover:shadow-xl transition duration-300 cursor-pointer flex flex-col h-full">
-      <a href="server/featuredproducts.php?id=<?php echo $row['featured_id']; ?>">
-        <img src="<?php echo $row['featured_image']; ?>" class="mx-auto mb-4 h-80 object-contain">
-      </a>
-        <h4 class="font-semibold text-center text-primary"><?php echo $row['featured_name']; ?></h4>
-        <p class="text-base text-customGreen-700 text-center font-bold">₱<?php echo $row['featured_price']; ?></p>
-        <div class="text-center mt-4 flex justify-center gap-10">
-          <a href="buypage.php?id=<?php echo $row['featured_id']; ?>&type=featured">
-              <button class="bg-customBlue text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                Buy Now
-              </button>
-          </a>
-        </div>
-    </div>
-  <?php }?>
-  </div>
-  </section>
-
-  <!-- Best Seller Section -->
- <section id="products" class="py-10 px-6">
-  <h3 class="text-2xl font-semibold text-center mb-8 text-primary">Best Sellers</h3>
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-  <?php include('server/get_bestseller.php'); ?>
-  <?php while($row=$bestseller_products->fetch_assoc()){ ?>
-  <div class="bg-white shadow rounded p-4 hover:shadow-xl transition duration-300 cursor-pointer flex flex-col h-full">
-    <a href="server/bestsellerproducts.php?id=<?php echo $row['best_id']; ?>">
-      <img src="<?php echo $row['best_image']; ?>" class="mx-auto mb-4 h-80 object-contain">
-    </a>
-      <h4 class="font-semibold text-center text-primary"><?php echo $row['best_name']; ?></h4>
-      <p class="text-base text-customGreen-700 text-center font-bold">₱<?php echo $row['best_price']; ?></p>
-      <div class="text-center mt-4 flex justify-center gap-10">
-        <a href="buypage.php?id=<?php echo $row['best_id']; ?>&type=bestseller">
-            <button class="bg-customBlue text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-              Buy Now
-            </button>
-        </a>
-      </div>
-  </div>
-  <?php }?>
-  </div>
-  </section>
-
-  <!-- Footer -->
+<!-- Footer -->
   <footer class="bg-customBlue text-white pt-10 pb-4 px-6 mt-10">
     <div class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-16 justify-center text-center md:text-left">
 
@@ -178,5 +221,6 @@
     <div class="bg-white text-center p-4">
       <p class="text-sm text-gray-600">&copy; 2025 Panacea Pharmaceutical. All rights reserved.</p>
     </div>
+
 </body>
 </html>
